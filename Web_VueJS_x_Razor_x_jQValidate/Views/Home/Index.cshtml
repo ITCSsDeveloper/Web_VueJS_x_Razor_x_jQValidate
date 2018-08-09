@@ -1,0 +1,157 @@
+﻿@model  Web_VueJS_x_Razor_x_jQValidate.Models.HomeModel
+@{
+    ViewBag.Title = "Home Page";
+    Layout = null;
+}
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>@ViewBag.Title</title>
+
+    <link rel="stylesheet" href="~/Content/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/Content/bootstrap-theme.min.css" />
+    <link rel="stylesheet" href="~/Content/Site.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.min.css" />
+
+    <style>
+        [v-cloak] {
+            display: none;
+        }
+
+        .field-validation-error {
+            color: red;
+        }
+    </style>
+
+    <script src="~/Scripts/jquery-3.3.1.min.js"></script>
+    <script src="~/Scripts/jquery.validate.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.js"></script>
+    <script src="~/Scripts/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.17/vue.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div id="new-app" style="padding: 100px;" class="row">
+
+            Note : jQ Validation จับตาม Name,
+                 : jQ Validation ถ้ามีเงื่อนไขตัวใดตัวนึงพัง ทั้งฟอร์มจะตีว่า Valid
+                 : JQ Validation จะจับตาม Element ที่ Persent บนหน้าจอเท่านั้น display:none จะไม่มีผล
+
+
+            <form class="form-horizontal" id="form-interview" v-on:submit.prevent="doSubmit(event)">
+                <div v-for="(item,i) in CustomerInfo">
+                    @if (false)
+                    {
+                        <div class="form-group">
+                            <label class="control-label col-sm-2">@Html.LabelFor(x => x.vCustomerInfo.FirstName):</label>
+                            <div class="col-sm-10">
+                                @Html.TextBoxFor(x => x.vCustomerInfo.FirstName, new Dictionary<string, object> { { "class", "form-control" }, { "v-bind:id", "'item.FirstName'+i" }, { "v-bind:name", "'item.FirstName'+i" }, { "v-model", "item.FirstName" } })
+                                @Html.ValidationMessageFor(x => x.vCustomerInfo.FirstName, "", new Dictionary<string, object> { { "v-bind:data-valmsg-for", "'item.FirstName'+i" } })
+                            </div>
+                        </div>
+                    }
+
+                    <div class="form-group">
+                        <label class="control-label col-sm-2">@Html.LabelFor(x => x.vCustomerInfo.BirthDate):</label>
+                        <div class="col-sm-10">
+                            <div class='input-group date'>
+                                @Html.TextBoxFor(x => x.vCustomerInfo.BirthDate, new Dictionary<string, object> {
+                                   { "class", "form-control" },
+                                   { "v-bind:id", "'item_BirthDate_'+i" },
+                                   { "v-bind:dpk", "$(function() { InitDPK('item_BirthDate_'+i, item, 'BirthDate' ) })" }
+                                })
+                                @Html.ValidationMessageFor(x => x.vCustomerInfo.BirthDate, "", new Dictionary<string, object> { { "v-bind:data-valmsg-for", "'item.BirthDate'+i" } })
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label col-sm-2"></label>
+                    <div class="col-sm-10">
+                        <button type="submit" class="btn btn-success">Submit</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+
+    let rawData = JSON.parse('@Html.Raw(Json.Encode(Model))');
+
+    function ConvertToJsDate(e) {
+            if (e != null && e.length > 0) {
+                let _date = moment(e);
+                return _date.format('YYYY-MM-DD');
+            }
+            else {
+                return null;
+            }
+        }
+    function ConvertToDateMVC (e) {
+            try {
+                let dateMVC = '/Date(' + (e.date.unix() * 1000 + 25200000) + ')/';
+                return dateMVC;
+            } catch  {
+                return null
+            }
+    }
+    function SetUpDatePicker(selector, defaultDate, callBack) {
+        $(selector).datetimepicker({
+            format: 'YYYY-MM-DD',
+            defaultDate: ConvertToJsDate(defaultDate)
+        }).on('dp.change', function (e) {
+            defaultDate = ConvertToDateMVC(e);
+            callBack(defaultDate);
+        });
+    }
+    function InitDPK(selector, defaultDate, varname) {
+        SetUpDatePicker(
+             "#" + selector,
+             defaultDate[name],
+             function (x) { defaultDate[varname] = x; }
+         );
+     }
+
+    $(function () {
+          let app = new Vue({
+            el: "#new-app",
+            data: rawData,
+            mounted: function () {
+                this.afterRender();
+            },
+            methods: {
+                afterRender: function () {
+                    // Ref : https://stackoverflow.com/questions/9321040/unobtrusive-validation-not-working-on-dynamically-added-partial-view
+                    var form = $("#form-interview").closest("form");
+                    form.removeData('validator');
+                    form.removeData('unobtrusiveValidation');
+                    $.validator.unobtrusive.parse(form);
+                },
+                doSubmit: function (e) {
+                    //  Ref :: https://vuejs.org/v2/guide/events.html
+                    e.preventDefault();
+                    if ($("#form-interview").valid())
+                    {
+                       let submitData = JSON.stringify(rawData);
+                       $.ajax({
+                            type: "POST",
+                            url: '@Url.Content("~/api/test/SaveInterview")',
+                            data: data,
+                            dataType: 'json',
+                            complete: function (x) {
+                                console.log(x)
+                            }
+                        });
+                    }
+                }
+            },
+        });
+    });
+    </script>
+</body>
+</html>
