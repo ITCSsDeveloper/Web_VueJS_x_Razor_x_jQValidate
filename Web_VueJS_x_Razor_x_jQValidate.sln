@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27703.2026
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Web_VueJS_x_Razor_x_jQValidate", "Web_VueJS_x_Razor_x_jQValidate\Web_VueJS_x_Razor_x_jQValidate.csproj", "{4FC828B3-C299-454E-8E82-EDC5A72AD042}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4FC828B3-C299-454E-8E82-EDC5A72AD042}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4FC828B3-C299-454E-8E82-EDC5A72AD042}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4FC828B3-C299-454E-8E82-EDC5A72AD042}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4FC828B3-C299-454E-8E82-EDC5A72AD042}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {AB7A0B06-BCC9-4AE8-B9DE-69ABA4497EF3}
+	EndGlobalSection
+EndGlobal
